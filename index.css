@@ -1,0 +1,13 @@
+.icon {
+    height: 180px;
+    width: 180px;
+    padding-top: 80px;
+}
+@media (max-width: 768px) {
+    .icon{
+        height: 300px;
+        width: 300px;
+        margin-left: auto;
+        margin-right:auto;
+    }
+}
