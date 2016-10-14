@@ -1,5 +1,8 @@
 # AlitasoFan
-[@alitaso345](https://github.com/alitaso345) fansite.
+[@alitaso345](https://github.com/alitaso345)先生のファンサイト
+
+[https://pps5.github.io/AlitasoFan/](https://pps5.github.io/AlitasoFan/)
 
 ## Contents
-- The art gallery of Eru Chitanda pictures by [@alitaso345](https://github.com/alitaso345)
+- ありたそ画展
+  - ありたそ先生のよる千反田える
