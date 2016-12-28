@@ -4,8 +4,17 @@
     margin-top: 80px;
     border: solid 1px
 }
+.gp-pic {
+    height: 300px;
+    width: 300px;
+    border: solid 1px
+}
+.gp-info {
+    font-size: 120%
+}
+
 @media (max-width: 768px) {
-    .icon{
+    .icon {
         height: 300px;
         width: 300px;
         margin-left: auto;
