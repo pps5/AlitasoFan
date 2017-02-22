@@ -1,0 +1,180 @@
+.hide {
+    display: none;
+}
+
+#container {
+    padding-top: 70px;
+}
+
+#loading {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+}
+
+header {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: auto;
+    margin: 0;
+    padding: 0;
+}
+
+header ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+header li {
+    display: inline-block;
+    float: left;
+    padding: 20px 16px;
+    color: #f2f2f2;
+    font-size: 20px;
+}
+
+header li a {
+    color: #f2f2f2;
+}
+
+header #twitter {
+    padding: 9px 16px;
+    float: right;
+}
+
+header #twitter img {
+    width: 40px;
+}
+
+header #twitter i {
+    padding: 10px 5px;
+}
+
+header #twitter span {
+    cursor: pointer;
+}
+
+#gallery {
+    display: flex;
+    flex-wrap: wrap;
+    width: 85%;
+    padding: 0 7% 0 7%;
+}
+
+.flex-item {
+    flex: 0 0 25%;
+    margin: 20px 0;
+}
+
+.picture {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+}
+
+.pic-wrapper {
+    border: 1px solid;
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+.label {
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 10px 0;
+}
+
+.label p {
+    margin: 0;
+    padding: 0 15px;
+}
+
+.pic-wrapper .fa-heart,
+.pic-wrapper .fa-heart-o {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 8px;
+    font-size: 1.2em;
+    color: #eee;
+}
+
+.pic-wrapper .fa-heart-o:hover {
+    color: #FC4848;
+}
+
+.pic-wrapper .fa-twitter {
+    position: absolute;
+    right: 35px;
+    bottom: 0;
+    padding: 8px;
+    font-size: 1.3em;
+    color: #eee;
+}
+
+.pic-wrapper .fa-twitter:hover {
+    color: #00aced;
+}
+
+.pic-wrapper .like-count {
+    position: absolute;
+    right: 8px;
+    bottom: 30px;
+    font-size: 1.2em;
+    color: #eee;
+}
+
+.lg-caption {
+    display: none;
+}
+
+license {
+    display: none;
+}
+
+/* media query */
+@media screen and (min-width: 1600px) {
+    .flex-item {
+        flex: 0 0 25%;
+    }
+}
+
+
+@media screen and (max-width: 1600px) {
+    .flex-item {
+        flex: 0 0 33.3%;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .flex-item {
+        flex: 0 0 50%;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .flex-item {
+        flex: 0 0 100%;
+    }
+    .pic-wrapper {
+        border: 1px solid;
+        position: relative;
+        width: 250px;
+        height: 250px;
+        margin: 0 auto;
+        cursor: pointer;
+    }
+
+}
