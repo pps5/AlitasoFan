@@ -1,0 +1,26 @@
+.unauthorized {
+    display: none;
+}
+
+.notalitaso {
+    display: none;
+}
+
+label {
+    display: inline-block;
+    width: 200px;
+}
+
+#preview-area {
+    margin: 20px;
+}
+
+img#preview {
+    display: block;
+    width: 200px;
+    height: 200px;
+}
+
+.hide {
+    display: none;
+}

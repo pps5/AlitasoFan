@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+
+      <title>New</title>
+      <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase.js"></script>
+      <script src="js/init.js"></script>
+      <script src="js/db.js"></script>
+      <link rel="stylesheet" href="css/post.css">
+  </head>
+  <body>
+      <div class="unauthorized">
+          <input id="twitter-login" type="button" value="Twitter Login">
+          <h1 id="notalitaso">おまえにその権限はない</h1>
+      </div>
+
+      <div class="authorized">
+          <form id="new-pic-form" data-validate>
+              <p class="form-inline">
+                  <input id="picture" type="file" required>
+              </p>
+              <p class="form-inline">
+                  <label for="character">キャラ名:</label>
+                  <input id="character" type="text" size="30" required>
+              </p>
+              <p class="form-inline">
+                  <label for="origin">元ネタ:</label>
+                  <input id="origin" type="text" list="originals" size="30" required>
+                  <datalist id="originals"></datalist>
+              </p>
+              <p class="form-inline">
+                  <label for="selling">アピールポイント:</label>
+                  <input id="selling" type="text" size="30" placeholder="あれば一言">
+              </p>
+              <input type="button" id="submit" value="登録" disabled>
+              <div id="preview-area" class="hide">preview:<img id="preview"></div>
+          </form>
+      </div>
+      <script src="js/post.js"></script>
+  </body>
+</html>
