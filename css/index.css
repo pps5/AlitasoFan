@@ -2,7 +2,8 @@
     display: none;
 }
 
-#container {
+gallery {
+    display: block;
     padding-top: 70px;
 }
 
@@ -12,54 +13,7 @@
     left: 50%;
 }
 
-header {
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    overflow: auto;
-    margin: 0;
-    padding: 0;
-}
-
-header ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #333;
-}
-
-header li {
-    display: inline-block;
-    float: left;
-    padding: 20px 16px;
-    color: #f2f2f2;
-    font-size: 20px;
-}
-
-header li a {
-    color: #f2f2f2;
-}
-
-header #twitter {
-    padding: 9px 16px;
-    float: right;
-}
-
-header #twitter img {
-    width: 40px;
-}
-
-header #twitter i {
-    padding: 10px 5px;
-}
-
-header #twitter span {
-    cursor: pointer;
-}
-
-#gallery {
+#lg-container {
     display: flex;
     flex-wrap: wrap;
     width: 85%;
@@ -111,6 +65,7 @@ header #twitter span {
     color: #eee;
 }
 
+.pic-wrapper .fa-heart:hover,
 .pic-wrapper .fa-heart-o:hover {
     color: #FC4848;
 }

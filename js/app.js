@@ -1343,11 +1343,13 @@ process.umask = function() { return 0; };
 },{}],3:[function(require,module,exports){
 (function (global){
 "use strict";
-exports.__esModule = true;
-var firebase = (typeof window !== "undefined" ? window['firebase'] : typeof global !== "undefined" ? global['firebase'] : null);
-var db_1 = require("./db");
-var App = (function () {
-    function App() {
+Object.defineProperty(exports, "__esModule", { value: true });
+const firebase = (typeof window !== "undefined" ? window['firebase'] : typeof global !== "undefined" ? global['firebase'] : null);
+const riot = (typeof window !== "undefined" ? window['riot'] : typeof global !== "undefined" ? global['riot'] : null);
+const lightGallery = (typeof window !== "undefined" ? window['lightGallery'] : typeof global !== "undefined" ? global['lightGallery'] : null);
+const db_1 = require("./db");
+class App {
+    constructor() {
         this.CONFIG = {
             apiKey: "AIzaSyA_FYBc5kMHj6GS529ENXUPz16ryyVSN-w",
             authDomain: "alitasofan.firebaseapp.com",
@@ -1355,59 +1357,195 @@ var App = (function () {
             storageBucket: "alitasofan.appspot.com",
             messagingSenderId: "305516175755"
         };
+        this.onRequestedLogin = (event) => {
+            var provider = new firebase.auth.TwitterAuthProvider();
+            firebase.auth().signInWithPopup(provider).then((resolve) => {
+                if (event.detail.item) {
+                    document.dispatchEvent(new CustomEvent('toggleLikeRequest', {
+                        detail: event.detail
+                    }));
+                }
+            }, (reject) => {
+            });
+        };
+        this.onRequestedToggleLike = (event) => {
+            if (this.user) {
+                var target;
+                var eventItem = event.detail.item;
+                for (let item of this.images) {
+                    if (item.key === eventItem.key) {
+                        target = item;
+                    }
+                }
+                if (target) {
+                    db_1.FirebaseDB.toggleLike(target.key, this.user.uid);
+                    var like = target.like;
+                    if (like.users && like.users[this.user.uid]) {
+                        like.count--;
+                        like.users[this.user.uid] = null;
+                    }
+                    else {
+                        like.count++;
+                        if (!like.users) {
+                            like.users = {};
+                        }
+                        like.users[this.user.uid] = true;
+                    }
+                    console.log(this.images);
+                    this.updateGallery();
+                }
+            }
+        };
+        this.onAuthStateChanged = (user) => {
+            if (user) {
+                this.user = user;
+                this.updateGallery();
+                db_1.FirebaseDB.isAlitaso().then((resolve) => {
+                    if (!this.isAlitaso) {
+                        this.isAlitaso = true;
+                        this.updateTopbar();
+                    }
+                }, (error) => {
+                    if (this.isAlitaso) {
+                        this.isAlitaso = false;
+                        this.updateTopbar();
+                    }
+                });
+            }
+            else {
+                this.user = null;
+                this.isAlitaso = false;
+                this.updateAllView();
+            }
+        };
+        this.updateAllView = () => {
+            this.updateTopbar();
+            this.updateGallery();
+        };
+        this.updateTopbar = () => {
+            riot.mount('topbar', {
+                isAlitaso: this.isAlitaso,
+                user: this.user
+            });
+            document.querySelector('#login span').addEventListener('click', this.onRequestedLogin);
+        };
+        this.updateGallery = () => {
+            var loading = document.querySelector('#loading');
+            var gallery = document.querySelector('gallery');
+            gallery.className = 'hide';
+            loading.className = '';
+            riot.mount('gallery', {
+                user: this.user.uid,
+                items: this.images
+            });
+            loading.className = 'hide';
+            gallery.className = '';
+            lightGallery(document.querySelector('#lg-container'), {
+                selector: '.pic-wrapper',
+                share: true
+            });
+        };
         var app = firebase.initializeApp(this.CONFIG);
-        var db = new db_1.FirebaseDB();
-        db.fetchOriginals().then(function (result) {
-            console.log(result);
-        });
-        db.fetchImageInfo().then(function (result) {
-            console.log(result);
+        firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
+        document.addEventListener('loginRequest', this.onRequestedLogin);
+        document.addEventListener('toggleLikeRequest', this.onRequestedToggleLike);
+        this.updateTopbar();
+        db_1.FirebaseDB.fetchImageInfo().then((images) => {
+            this.images = images;
+            this.updateGallery();
         });
     }
-    return App;
-}());
-var a = new App();
+}
+var app = new App();
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./db":4}],4:[function(require,module,exports){
 (function (global){
 "use strict";
-exports.__esModule = true;
-var firebase = (typeof window !== "undefined" ? window['firebase'] : typeof global !== "undefined" ? global['firebase'] : null);
-var es6_promise_1 = require("es6-promise");
-var FirebaseDB = (function () {
-    function FirebaseDB() {
-        console.log('aaa');
-    }
-    FirebaseDB.prototype.fetchOriginals = function () {
-        return new es6_promise_1.Promise(function (result) {
-            firebase.database().ref('origin').once('value', function (snapshot) {
+Object.defineProperty(exports, "__esModule", { value: true });
+const firebase = (typeof window !== "undefined" ? window['firebase'] : typeof global !== "undefined" ? global['firebase'] : null);
+const es6_promise_1 = require("es6-promise");
+class FirebaseDB {
+    static fetchOriginals() {
+        return new es6_promise_1.Promise((result) => {
+            firebase.database().ref('origin').once('value', (snapshot) => {
                 var origins = snapshot.val();
                 var originArray = [];
-                for (var key in origins) {
+                for (let key in origins) {
                     originArray.push(key);
                 }
                 result(originArray);
             });
         });
-    };
-    FirebaseDB.prototype.fetchImageInfo = function () {
-        return new es6_promise_1.Promise(function (result, error) {
+    }
+    static fetchImageInfo() {
+        return new es6_promise_1.Promise((result, error) => {
             var ref = firebase.database().ref('/characters/');
-            ref.orderByChild('timestamp').once('value', function (snapshot) {
+            ref.orderByChild('timestamp').once('value', (snapshot) => {
                 var values = [];
-                console.dir(snapshot.forEach);
-                snapshot.forEach(function (child) {
-                    console.log(child);
+                snapshot.forEach((child) => {
+                    var v = child.val();
+                    v['key'] = child.key;
+                    values.push(v);
+                    return false;
                 });
-                result(snapshot);
-            }, function (error) {
+                result(values);
+            }, (error) => {
                 console.dir(error);
             });
         });
-    };
-    return FirebaseDB;
-}());
+    }
+    static isAlitaso() {
+        return new es6_promise_1.Promise((resolve, error) => {
+            firebase.database().ref('alitasoauth').once('value', resolve, error);
+        });
+    }
+    static writeNewOriginal(originalName) {
+        this.fetchOriginals().then((originals) => {
+            if (originals.indexOf(originalName) === -1) {
+                firebase.database().ref('origin').child(originalName).set({
+                    name: originalName
+                });
+            }
+        });
+    }
+    static writeImageData(fileName, character, original, selling) {
+        var baseName = fileName.split('.')[0];
+        var current = new Date();
+        var data = {
+            character: character,
+            original: original,
+            key: baseName,
+            selling_point: selling,
+            date: current.toISOString(),
+            timestamp: current.getTime(),
+            like: {
+                count: 0,
+                users: null
+            }
+        };
+        return firebase.database().ref('characters').child(baseName).set(data);
+    }
+    static toggleLike(imageId, userId) {
+        var ref = firebase.database().ref('characters').child(imageId).child('like');
+        ref.transaction((like) => {
+            if (like) {
+                if (like.users && like.users[userId]) {
+                    like.count--;
+                    like.users[userId] = null;
+                }
+                else {
+                    like.count++;
+                    if (!like.users) {
+                        like.users = {};
+                    }
+                    like.users[userId] = true;
+                }
+            }
+            return like;
+        });
+    }
+}
 exports.FirebaseDB = FirebaseDB;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
