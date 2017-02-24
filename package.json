@@ -1,0 +1,41 @@
+{
+  "name": "alitasofan",
+  "version": "1.0.0",
+  "description": "[@alitaso345](https://github.com/alitaso345)先生のファンサイト",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pps5/AlitasoFan.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pps5/AlitasoFan/issues"
+  },
+  "homepage": "https://github.com/pps5/AlitasoFan#readme",
+  "devDependencies": {
+    "browserify": "^14.1.0",
+    "browserify-shim": "^3.8.13",
+    "es6-promise": "^4.0.5",
+    "firebase": "^3.6.10",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^3.1.5",
+    "install": "^0.8.7",
+    "jquery": "^3.1.1",
+    "tsify": "^3.0.1",
+    "typescript": "^2.2.1",
+    "typings": "^2.1.0",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "firebase": "global:firebase"
+  }
+}
