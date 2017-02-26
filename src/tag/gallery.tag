@@ -35,6 +35,18 @@
     this.items = opts.items;
     this.user = opts.user;
 
+    document.addEventListener('onAuthStateChanged', (event: any) => {
+      this.user = event.detail.user;
+      this.update();
+    });
+
+    document.addEventListener('onGalleryItemsChanged', (event: any) => {
+      this.items = event.detail.items;
+    })
+    this.on('update', () => {
+      console.log('update');
+    });
+
     this.getDateString = (timestamp: number): string => {
       var date = new Date(timestamp);
       var year = date.getFullYear();
@@ -72,15 +84,11 @@
       var like = event.item.item.like;
       if (this.user) {
         document.dispatchEvent(new CustomEvent('toggleLikeRequest', {
-          detail: {
-            item: event.item.item
-          }
+          detail: { item: event.item.item }
         }));
       } else {
         document.dispatchEvent(new CustomEvent('loginRequest', {
-          detail: {
-            item: event.item.item
-          }
+          detail: { item: event.item.item }
         }));
       }
       event.stopPropagation();

@@ -1375,7 +1375,6 @@ class App {
         };
         this.onRequestedLogout = (event) => {
             firebase.auth().signOut().then((resolve) => {
-                console.log(resolve);
             }, (reject) => {
                 var errorDiv = document.getElementById('error');
                 errorDiv.className = 'fadeIn';
@@ -1393,58 +1392,58 @@ class App {
                         target = item;
                     }
                 }
-                if (target) {
-                    db_1.FirebaseDB.toggleLike(target.key, this.user.uid);
-                    var like = target.like;
-                    if (like.users && like.users[this.user.uid]) {
-                        like.count--;
-                        like.users[this.user.uid] = null;
+                if (!target)
+                    return;
+                db_1.FirebaseDB.toggleLike(target.key, this.user.uid);
+                var like = target.like;
+                if (like.users && like.users[this.user.uid]) {
+                    like.count--;
+                    like.users[this.user.uid] = null;
+                }
+                else {
+                    like.count++;
+                    if (!like.users) {
+                        like.users = {};
                     }
-                    else {
-                        like.count++;
-                        if (!like.users) {
-                            like.users = {};
-                        }
-                        like.users[this.user.uid] = true;
-                    }
-                    this.updateGallery();
+                    like.users[this.user.uid] = true;
                 }
             }
         };
         this.onAuthStateChanged = (user) => {
+            document.dispatchEvent(new CustomEvent('onAuthStateChanged', {
+                detail: { user: user }
+            }));
             if (user) {
                 this.user = user;
-                this.updateGallery();
                 db_1.FirebaseDB.isAlitaso().then((resolve) => {
                     if (!this.isAlitaso) {
                         this.isAlitaso = true;
-                        this.updateAllView();
+                        document.dispatchEvent(new CustomEvent('onAuthStateChanged', {
+                            detail: { user: user, isAlitaso: true }
+                        }));
                     }
                 }, (error) => {
                     if (this.isAlitaso) {
                         this.isAlitaso = false;
-                        this.updateAllView();
+                        document.dispatchEvent(new CustomEvent('onAuthStateChanged', {
+                            detail: { user: user, isAlitaso: false }
+                        }));
                     }
                 });
             }
             else {
                 this.user = null;
                 this.isAlitaso = false;
-                this.updateAllView();
             }
         };
-        this.updateAllView = () => {
-            this.updateTopbar();
-            this.updateGallery();
-        };
-        this.updateTopbar = () => {
+        this.mountTopbar = () => {
             riot.mount('topbar', {
                 isAlitaso: this.isAlitaso,
                 user: this.user
             });
             document.querySelector('#login span').addEventListener('click', this.onRequestedLogin);
         };
-        this.updateGallery = () => {
+        this.mountGallery = () => {
             var loading = document.querySelector('#loading');
             var gallery = document.querySelector('gallery');
             gallery.className = 'hide';
@@ -1465,10 +1464,10 @@ class App {
         document.addEventListener('loginRequest', this.onRequestedLogin);
         document.addEventListener('logoutRequest', this.onRequestedLogout);
         document.addEventListener('toggleLikeRequest', this.onRequestedToggleLike);
-        this.updateTopbar();
+        this.mountTopbar();
         db_1.FirebaseDB.fetchImageInfo().then((images) => {
             this.images = images;
-            this.updateGallery();
+            this.mountGallery();
         });
     }
 }

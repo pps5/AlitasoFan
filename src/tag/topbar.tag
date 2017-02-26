@@ -20,6 +20,23 @@
         this.user = opts.user;
         this.dropdown = false;
 
+        document.addEventListener('click', (event) => {
+            if (this.dropdown) {
+                this.dropdown = false;
+                this.update();
+            }
+        });
+
+        document.addEventListener('onAuthStateChanged', (event: any) => {
+            this.user = event.detail.user;
+            if (event.detail.isAlitaso) {
+                this.is_alitaso = true;
+            } else {
+                this.is_alitaso = false;
+            }
+            this.update();
+        });
+
         this.getPhotoURL = (): string => {
             if (this.user) return this.user.photoURL;
             else return '';
@@ -32,6 +49,7 @@
 
         this.toggle = (event) => {
             this.dropdown = !this.dropdown;
+            event.stopPropagation();
         }
 
         this.isLoggedIn = (): boolean => {

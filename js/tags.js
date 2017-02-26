@@ -8,6 +8,16 @@ this.URL_SELF = 'https://pps5.github.io/AlitasoFan/';
 this.URL_TWEET = 'https://twitter.com/intent/tweet?text=';
 this.items = opts.items;
 this.user = opts.user;
+document.addEventListener('onAuthStateChanged', function (event) {
+    _this.user = event.detail.user;
+    _this.update();
+});
+document.addEventListener('onGalleryItemsChanged', function (event) {
+    _this.items = event.detail.items;
+});
+this.on('update', function () {
+    console.log('update');
+});
 this.getDateString = function (timestamp) {
     var date = new Date(timestamp);
     var year = date.getFullYear();
@@ -41,16 +51,12 @@ this.like = function (event) {
     var like = event.item.item.like;
     if (_this.user) {
         document.dispatchEvent(new CustomEvent('toggleLikeRequest', {
-            detail: {
-                item: event.item.item
-            }
+            detail: { item: event.item.item }
         }));
     }
     else {
         document.dispatchEvent(new CustomEvent('loginRequest', {
-            detail: {
-                item: event.item.item
-            }
+            detail: { item: event.item.item }
         }));
     }
     event.stopPropagation();
@@ -65,6 +71,22 @@ var _this = this;
 this.is_alitaso = opts.isAlitaso;
 this.user = opts.user;
 this.dropdown = false;
+document.addEventListener('click', function (event) {
+    if (_this.dropdown) {
+        _this.dropdown = false;
+        _this.update();
+    }
+});
+document.addEventListener('onAuthStateChanged', function (event) {
+    _this.user = event.detail.user;
+    if (event.detail.isAlitaso) {
+        _this.is_alitaso = true;
+    }
+    else {
+        _this.is_alitaso = false;
+    }
+    _this.update();
+});
 this.getPhotoURL = function () {
     if (_this.user)
         return _this.user.photoURL;
@@ -79,6 +101,7 @@ this.getDisplayName = function () {
 };
 this.toggle = function (event) {
     _this.dropdown = !_this.dropdown;
+    event.stopPropagation();
 };
 this.isLoggedIn = function () {
     if (_this.user)

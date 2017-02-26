@@ -27,10 +27,10 @@ class App {
         document.addEventListener('logoutRequest', this.onRequestedLogout);
         document.addEventListener('toggleLikeRequest', this.onRequestedToggleLike);
 
-        this.updateTopbar();
+        this.mountTopbar();
         FirebaseDB.fetchImageInfo().then((images) => {
             this.images = images;
-            this.updateGallery();
+            this.mountGallery();
         });
     }
 
@@ -54,7 +54,6 @@ class App {
     private onRequestedLogout = (event): void => {
         firebase.auth().signOut().then((resolve) => {
             // no-op; update views in onAuthStateChanged()
-            console.log(resolve);
         }, (reject) => {
             var errorDiv = document.getElementById('error');
             errorDiv.className = 'fadeIn';
@@ -73,55 +72,55 @@ class App {
                     target = item;
                 }
             }
-            if (target) {
-                FirebaseDB.toggleLike(target.key, this.user.uid);
-                var like = target.like;
-                if (like.users && like.users[this.user.uid]) {
-                    like.count--;
-                    like.users[this.user.uid] = null;
-                } else {
-                    like.count++;
-                    if (!like.users) {
-                        like.users = {};
-                    }
-                    like.users[this.user.uid] = true;
+            if (!target) return; // just in case
+
+            FirebaseDB.toggleLike(target.key, this.user.uid);
+            var like = target.like;
+            if (like.users && like.users[this.user.uid]) {
+                like.count--;
+                like.users[this.user.uid] = null;
+            } else {
+                like.count++;
+                if (!like.users) {
+                    like.users = {};
                 }
-                this.updateGallery();
+                like.users[this.user.uid] = true;
             }
         }
     }
 
     private onAuthStateChanged = (user): void => {
+        document.dispatchEvent(new CustomEvent('onAuthStateChanged', {
+            detail: { user: user }
+        }));
+
         if (user) {
             this.user = user;
-            this.updateGallery();
             FirebaseDB.isAlitaso().then((resolve) => {
                 // not alitaso -> alitaso; maybe alitaso logged in
                 if (!this.isAlitaso) {
                     this.isAlitaso = true;
-                    this.updateAllView();
+                    document.dispatchEvent(new CustomEvent('onAuthStateChanged', {
+                        detail: { user: user, isAlitaso: true }
+                    }));
                 }
             }, (error) => {
                 // alitaso -> not alitaso; maybe alitaso logged out
                 if (this.isAlitaso) {
                     this.isAlitaso = false;
-                    this.updateAllView();
+                    document.dispatchEvent(new CustomEvent('onAuthStateChanged', {
+                        detail: { user: user, isAlitaso: false }
+                    }));
                 }
             });
         } else {
             // any user logged out
             this.user = null;
             this.isAlitaso = false;
-            this.updateAllView();
         }
     }
 
-    private updateAllView = (): void => {
-        this.updateTopbar();
-        this.updateGallery();
-    }
-
-    private updateTopbar = (): void => {
+    private mountTopbar = (): void => {
         riot.mount('topbar', {
             isAlitaso: this.isAlitaso,
             user: this.user
@@ -129,7 +128,7 @@ class App {
         document.querySelector('#login span').addEventListener('click', this.onRequestedLogin);
     }
 
-    private updateGallery = (): void => {
+    private mountGallery = (): void => {
         var loading = document.querySelector('#loading');
         var gallery = document.querySelector('gallery');
         gallery.className = 'hide';
