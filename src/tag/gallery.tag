@@ -52,7 +52,7 @@
     }
 
     this.getLikeClass = (likeUsers: { [index: string]: string}): string => {
-      if (this.user && likeUsers && likeUsers[this.user]) {
+      if (this.user && likeUsers && likeUsers[this.user.uid]) {
         return 'fa fa-heart';
       } else {
         return 'fa fa-heart-o';

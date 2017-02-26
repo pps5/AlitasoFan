@@ -44,4 +44,4 @@ gulp.task('merge:tag', function() {
     .pipe(gulp.dest('./js/'));
 });
 
-gulp.task('default', ['compile:ts', 'merge:js']);
+gulp.task('default', ['compile:ts', 'merge:js', 'merge:tag']);

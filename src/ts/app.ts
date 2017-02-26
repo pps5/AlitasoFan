@@ -24,6 +24,7 @@ class App {
         firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
 
         document.addEventListener('loginRequest', this.onRequestedLogin);
+        document.addEventListener('logoutRequest', this.onRequestedLogout);
         document.addEventListener('toggleLikeRequest', this.onRequestedToggleLike);
 
         this.updateTopbar();
@@ -42,7 +43,24 @@ class App {
                 }));
             }
         }, (reject) => {
-            // todo: error handling
+            var errorDiv = document.getElementById('error');
+            errorDiv.className = 'fadeIn';
+            setTimeout(() => {
+                errorDiv.className = 'fadeOut';
+            }, 3000);
+        });
+    }
+
+    private onRequestedLogout = (event): void => {
+        firebase.auth().signOut().then((resolve) => {
+            // no-op; update views in onAuthStateChanged()
+            console.log(resolve);
+        }, (reject) => {
+            var errorDiv = document.getElementById('error');
+            errorDiv.className = 'fadeIn';
+            setTimeout(() => {
+                errorDiv.className = 'fadeOut';
+            }, 3000);
         });
     }
 
@@ -68,7 +86,6 @@ class App {
                     }
                     like.users[this.user.uid] = true;
                 }
-                console.log(this.images);
                 this.updateGallery();
             }
         }
@@ -82,13 +99,13 @@ class App {
                 // not alitaso -> alitaso; maybe alitaso logged in
                 if (!this.isAlitaso) {
                     this.isAlitaso = true;
-                    this.updateTopbar();
+                    this.updateAllView();
                 }
             }, (error) => {
                 // alitaso -> not alitaso; maybe alitaso logged out
                 if (this.isAlitaso) {
                     this.isAlitaso = false;
-                    this.updateTopbar();
+                    this.updateAllView();
                 }
             });
         } else {
@@ -118,7 +135,7 @@ class App {
         gallery.className = 'hide';
         loading.className = '';
         riot.mount('gallery', {
-            user: this.user.uid,
+            user: this.user,
             items: this.images
         });
         loading.className = 'hide';

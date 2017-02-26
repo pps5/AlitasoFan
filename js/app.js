@@ -1366,6 +1366,22 @@ class App {
                     }));
                 }
             }, (reject) => {
+                var errorDiv = document.getElementById('error');
+                errorDiv.className = 'fadeIn';
+                setTimeout(() => {
+                    errorDiv.className = 'fadeOut';
+                }, 3000);
+            });
+        };
+        this.onRequestedLogout = (event) => {
+            firebase.auth().signOut().then((resolve) => {
+                console.log(resolve);
+            }, (reject) => {
+                var errorDiv = document.getElementById('error');
+                errorDiv.className = 'fadeIn';
+                setTimeout(() => {
+                    errorDiv.className = 'fadeOut';
+                }, 3000);
             });
         };
         this.onRequestedToggleLike = (event) => {
@@ -1391,7 +1407,6 @@ class App {
                         }
                         like.users[this.user.uid] = true;
                     }
-                    console.log(this.images);
                     this.updateGallery();
                 }
             }
@@ -1403,12 +1418,12 @@ class App {
                 db_1.FirebaseDB.isAlitaso().then((resolve) => {
                     if (!this.isAlitaso) {
                         this.isAlitaso = true;
-                        this.updateTopbar();
+                        this.updateAllView();
                     }
                 }, (error) => {
                     if (this.isAlitaso) {
                         this.isAlitaso = false;
-                        this.updateTopbar();
+                        this.updateAllView();
                     }
                 });
             }
@@ -1435,7 +1450,7 @@ class App {
             gallery.className = 'hide';
             loading.className = '';
             riot.mount('gallery', {
-                user: this.user.uid,
+                user: this.user,
                 items: this.images
             });
             loading.className = 'hide';
@@ -1448,6 +1463,7 @@ class App {
         var app = firebase.initializeApp(this.CONFIG);
         firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
         document.addEventListener('loginRequest', this.onRequestedLogin);
+        document.addEventListener('logoutRequest', this.onRequestedLogout);
         document.addEventListener('toggleLikeRequest', this.onRequestedToggleLike);
         this.updateTopbar();
         db_1.FirebaseDB.fetchImageInfo().then((images) => {

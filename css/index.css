@@ -2,6 +2,26 @@
     display: none;
 }
 
+#error {
+    background-color: rgba(250, 10, 10, 0.95);
+    color: #eee;
+    left: 38%;
+    position: fixed;
+    padding: 20px;
+    border-radius: 3px;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+.fadeOut {
+    opacity: 0;
+}
+
+.fadeIn {
+    opacity: 1;
+}
+
 gallery {
     display: block;
     padding-top: 70px;
