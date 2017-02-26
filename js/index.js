@@ -30,18 +30,20 @@ firebase.auth().onAuthStateChanged(user => {
         if (isFinishInit && !isUpdatedLikeIcons) {
             updateAllLikeIcons();
         }
-
-        if (user.displayName === 'ありたそ') {
-            var ul = document.querySelector('ul');
-            var li = document.createElement('li');
-            var a = document.createElement('a');
-            a.setAttribute('href', 'post.html');
-            a.innerHTML = '画像投稿';
-            li.appendChild(a);
-            ul.appendChild(li);
-        }
     }
 });
+
+function setPostLink() {
+    authAlitaso().then(function() {
+        var ul = document.querySelector('ul');
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.setAttribute('href', 'post.html');
+        a.innerHTML = '画像投稿';
+        li.appendChild(a);
+        ul.appendChild(li);
+    }, function() { /* no-op; user is not alitaso345 */ });
+}
 
 function loginWithTwitter() {
     var provider = new firebase.auth.TwitterAuthProvider();
@@ -50,6 +52,7 @@ function loginWithTwitter() {
 
 var images;
 (function() {
+    setPostLink();
     document.querySelector('#twitter span').addEventListener('click', loginWithTwitter);
     fetchImageInfo().then(function(result) {
         images = result;

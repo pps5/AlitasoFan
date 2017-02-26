@@ -31,6 +31,13 @@ function fetchImageInfo() {
     });
 }
 
+function authAlitaso() {
+    return new Promise(function(resolve, error) {
+        firebase.database().ref('/alitasoauth')
+            .once('value', resolve, error);
+    });
+}
+
 //=================
 // Put
 //=================
