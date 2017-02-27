@@ -42,7 +42,7 @@ this.getLikeClass = function (likeUsers) {
 this.share = function (event) {
     event.preventDefault();
     var item = event.item.item;
-    var tweetURL = encodeURIComponent(_this.URL_TWEET + '#lg=1&slide=' + _this.items.indexOf(item));
+    var tweetURL = encodeURIComponent(_this.URL_SELF + '#lg=1&slide=' + _this.items.indexOf(item));
     var text = _this.getTweetText(item.character);
     window.open(_this.URL_TWEET + text + '&url=' + tweetURL);
     event.stopPropagation();
