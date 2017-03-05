@@ -1,13 +1,11 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (global){
 var riot = (typeof window !== "undefined" ? window['riot'] : typeof global !== "undefined" ? global['riot'] : null);
-module.exports = riot.tag2('gallery', '<div id="lg-container"> <div each="{item in items}" class="flex-item"> <figure id="{item.key}" class="pic-wrapper" data-sub-html="#lg-caption{item.key}" data-src="{this.getURL(item.key)}" data-tweet-text="{this.getTweetText(item.character)}"> <img class="picture" riot-src="{this.getURL(item.key)}"> <figcaption class="label"> <p>{item.character}</p> <p>{this.getDateString(item.timestamp)}</p> </figcaption> <div id="lg-caption{item.key}" class="lg-caption"> <h3> {item.character}（{item.original}）<br> {this.getDateString(item.timestamp)} </h3> </div> <i class="{this.getLikeClass(item.like.users)}" onclick="{like}"></i> <i class="fa fa-twitter" onclick="{share}"></i> <span class="like-count">{item.like.count} liked</span> </figure> </div>', '', '', function(opts) {
+module.exports = riot.tag2('gallery', '<select id="order" onchange="{onChanged}"> <option value="newer">新しい順</option> <option value="older">古い順</option> <option value="like">いいね順</option> </select> <div id="lg-container"> <div each="{item in items}" class="flex-item"> <figure id="{item.key}" class="pic-wrapper" data-sub-html="#lg-caption{item.key}" data-src="{this.getURL(item.key)}" data-tweet-text="{this.getTweetText(item.character)}"> <img class="picture" riot-src="{this.getURL(item.key)}"> <figcaption class="label"> <p>{item.character}</p> <p>{this.getDateString(item.timestamp)}</p> </figcaption> <div id="lg-caption{item.key}" class="lg-caption"> <h3> {item.character}（{item.original}）<br> {this.getDateString(item.timestamp)} </h3> </div> <i class="{this.getLikeClass(item.like.users)}" onclick="{like}"></i> <i class="fa fa-twitter" onclick="{share}"></i> <span class="like-count">{item.like.count} liked</span> </figure> </div>', '', '', function(opts) {
 var _this = this;
 this.BASE_PIC_URL = 'https://firebasestorage.googleapis.com/v0/b/alitasofan.appspot.com/o/images%2F';
 this.URL_SELF = 'https://pps5.github.io/AlitasoFan/';
 this.URL_TWEET = 'https://twitter.com/intent/tweet?text=';
-this.items = opts.items;
-this.user = opts.user;
 document.addEventListener('onAuthStateChanged', function (event) {
     _this.user = event.detail.user;
     _this.update();
@@ -15,9 +13,14 @@ document.addEventListener('onAuthStateChanged', function (event) {
 document.addEventListener('onGalleryItemsChanged', function (event) {
     _this.items = event.detail.items;
 });
-this.on('update', function () {
-    console.log('update');
-});
+this.getOrgOrder = function (data) {
+    var orgOrder = [];
+    for (var _i = 0, data_1 = data; _i < data_1.length; _i++) {
+        var item = data_1[_i];
+        orgOrder.push(item.key);
+    }
+    return orgOrder;
+};
 this.getDateString = function (timestamp) {
     var date = new Date(timestamp);
     var year = date.getFullYear();
@@ -42,9 +45,12 @@ this.getLikeClass = function (likeUsers) {
 this.share = function (event) {
     event.preventDefault();
     var item = event.item.item;
-    var tweetURL = encodeURIComponent(_this.URL_TWEET + '#lg=1&slide=' + _this.items.indexOf(item));
+    var tweetURL = encodeURIComponent(_this.URL_SELF + '#lg=1&slide=');
+    var slidenum = _this.orgOrder.indexOf(_this.orgOrder.find(function (elem, idx, array) {
+        return elem === item.key;
+    }));
     var text = _this.getTweetText(item.character);
-    window.open(_this.URL_TWEET + text + '&url=' + tweetURL);
+    window.open(_this.URL_TWEET + text + '&url=' + tweetURL + slidenum);
     event.stopPropagation();
 };
 this.like = function (event) {
@@ -61,6 +67,48 @@ this.like = function (event) {
     }
     event.stopPropagation();
 };
+this.onChanged = function (event) {
+    var value = event.target.value;
+    if (value === 'newer') {
+        _this.sort('timestamp', false);
+    }
+    else if (value === 'older') {
+        _this.sort('timestamp', true);
+    }
+    else if (value === 'like') {
+        _this.sort('timestamp', false);
+        _this.sort('like', false);
+    }
+};
+this.sort = function (key, isAsc) {
+    if (isAsc) {
+        var num_a = 1;
+        var num_b = -1;
+    }
+    else {
+        var num_a = -1;
+        var num_b = 1;
+    }
+    _this.items.sort(function (a, b) {
+        var x, y;
+        if (key === 'like') {
+            x = a[key]['count'];
+            y = b[key]['count'];
+        }
+        else {
+            x = a[key];
+            y = b[key];
+        }
+        if (x > y)
+            return num_a;
+        if (x < y)
+            return num_b;
+        return 0;
+    });
+};
+this.user = opts.user;
+this.orgOrder = this.getOrgOrder(opts.items);
+this.items = opts.items;
 });
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],2:[function(require,module,exports){

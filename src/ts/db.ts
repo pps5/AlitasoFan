@@ -26,7 +26,7 @@ export class FirebaseDB {
                 snapshot.forEach((child) => {
                     var v = child.val();
                     v['key'] = child.key;
-                    values.push(v);
+                    values.unshift(v);
                     return false; // for each all
                 });
                 result(values);
