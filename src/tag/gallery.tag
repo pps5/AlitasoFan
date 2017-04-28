@@ -1,4 +1,10 @@
 <gallery>
+  <select id="order" onchange={ onChanged }>
+    <option value="newer">新しい順</option>
+    <option value="older">古い順</option>
+    <option value="like">いいね順</option>
+  </select>
+
   <div id="lg-container">
   <div each={ item in items } class="flex-item">
     <figure id={ item.key }
@@ -25,15 +31,13 @@
       <span class="like-count">{ item.like.count } liked</span>
     </figure>
   </div>
+
     <script type="typescript">
     declare var opts: any;
 
     this.BASE_PIC_URL = 'https://firebasestorage.googleapis.com/v0/b/alitasofan.appspot.com/o/images%2F';
     this.URL_SELF = 'https://pps5.github.io/AlitasoFan/';
     this.URL_TWEET = 'https://twitter.com/intent/tweet?text=';
-
-    this.items = opts.items;
-    this.user = opts.user;
 
     document.addEventListener('onAuthStateChanged', (event: any) => {
       this.user = event.detail.user;
@@ -43,9 +47,15 @@
     document.addEventListener('onGalleryItemsChanged', (event: any) => {
       this.items = event.detail.items;
     })
-    this.on('update', () => {
-      console.log('update');
-    });
+
+    this.getOrgOrder = (data: Array<any>): Array<any> => {
+      var orgOrder = [];
+
+      for (let item of data) {
+        orgOrder.push(item.key);
+      }
+      return orgOrder;
+    }
 
     this.getDateString = (timestamp: number): string => {
       var date = new Date(timestamp);
@@ -74,9 +84,12 @@
     this.share = (event) => {
       event.preventDefault();
       var item = event.item.item;
-      var tweetURL = encodeURIComponent(this.URL_TWEET + '#lg=1&slide=' + this.items.indexOf(item));
+      var tweetURL = encodeURIComponent(this.URL_SELF + '#lg=1&slide=');
+      var slidenum = this.orgOrder.indexOf(this.orgOrder.find((elem, idx, array) => {
+        return elem === item.key;
+      }));
       var text = this.getTweetText(item.character);
-      window.open(this.URL_TWEET + text + '&url=' + tweetURL);
+      window.open(this.URL_TWEET + text + '&url=' + tweetURL + slidenum);
       event.stopPropagation();
     }
 
@@ -93,6 +106,46 @@
       }
       event.stopPropagation();
     }
+
+    this.onChanged = (event) => {
+      var value = event.target.value;
+      if (value === 'newer') {
+        this.sort('timestamp', false);
+      } else if (value === 'older') {
+        this.sort('timestamp', true);
+      } else if (value === 'like') {
+        this.sort('timestamp', false);
+        this.sort('like', false);
+      }
+    }
+
+    this.sort = (key: string, isAsc: boolean): void => {
+      if (isAsc) {
+        var num_a = 1;
+        var num_b = -1;
+      } else {
+        var num_a = -1;
+        var num_b = 1;
+      }
+
+      this.items.sort((a: any, b: any) => {
+        var x, y;
+        if (key === 'like') {
+          x = a[key]['count'];
+          y = b[key]['count'];
+        } else {
+          x = a[key];
+          y = b[key];
+        }
+        if (x > y) return num_a;
+        if (x < y) return num_b;
+        return 0;
+      });
+    }
+
+    this.user = opts.user;
+    this.orgOrder = this.getOrgOrder(opts.items);
+    this.items = opts.items;
     </script>
 
 </gallery>

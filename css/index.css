@@ -27,6 +27,12 @@ gallery {
     padding-top: 70px;
 }
 
+#order {
+    display: block;
+    width: 30%;
+    margin: 0 auto;
+}
+
 #loading {
     position: absolute;
     top: 40%;

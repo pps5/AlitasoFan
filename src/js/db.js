@@ -23,7 +23,7 @@ class FirebaseDB {
                 snapshot.forEach((child) => {
                     var v = child.val();
                     v['key'] = child.key;
-                    values.push(v);
+                    values.unshift(v);
                     return false;
                 });
                 result(values);
