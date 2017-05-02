@@ -1512,7 +1512,7 @@ function createUploadFileName(file) {
 }
 function uploadImage(file, name) {
     return new Promise((complete, failure) => {
-        var uploadTask = storageRef.child('characters/' + name).put(file);
+        var uploadTask = storageRef.child('images/' + name).put(file);
         uploadTask.on('state_changed', snapshot => {
         }, failure, complete);
     });
