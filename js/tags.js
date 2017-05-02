@@ -45,12 +45,10 @@ this.getLikeClass = function (likeUsers) {
 this.share = function (event) {
     event.preventDefault();
     var item = event.item.item;
-
     var tweetURL = encodeURIComponent(_this.URL_SELF + '#lg=1&slide=');
     var slidenum = _this.orgOrder.indexOf(_this.orgOrder.find(function (elem, idx, array) {
         return elem === item.key;
     }));
-
     var text = _this.getTweetText(item.character);
     window.open(_this.URL_TWEET + text + '&url=' + tweetURL + slidenum);
     event.stopPropagation();

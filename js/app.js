@@ -1480,7 +1480,7 @@ var app = new App();
 Object.defineProperty(exports, "__esModule", { value: true });
 const firebase = (typeof window !== "undefined" ? window['firebase'] : typeof global !== "undefined" ? global['firebase'] : null);
 const es6_promise_1 = require("es6-promise");
-const IS_TESTING = true;
+const IS_TESTING = false;
 var characterRef = IS_TESTING ? '/test/' : '/characters/';
 class FirebaseDB {
     static fetchOriginals() {
