@@ -24,6 +24,16 @@ gulp.task('merge:js', function() {
     .pipe(gulp.dest('./js/'));
 });
 
+gulp.task('merge:postjs', function() {
+    return browserify({
+        entries: './src/js/post.js'
+    })
+    .external(['firebase'])
+    .bundle()
+    .pipe(source('post.js'))
+    .pipe(gulp.dest('./js/'));
+})
+
 gulp.task('compile:tag', function() {
     gulp.src('./src/tag/*.tag')
         .pipe(riot({
@@ -44,4 +54,4 @@ gulp.task('merge:tag', function() {
     .pipe(gulp.dest('./js/'));
 });
 
-gulp.task('default', ['compile:ts', 'merge:js', 'merge:tag']);
+gulp.task('default', ['compile:ts', 'merge:js', 'merge:postjs', 'merge:tag']);

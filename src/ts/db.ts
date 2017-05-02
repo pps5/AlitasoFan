@@ -3,6 +3,9 @@ import { Promise } from 'es6-promise';
 
 import { ImageInfo } from './imageinfo';
 
+const IS_TESTING = false;
+var characterRef = IS_TESTING ? '/test/' : '/characters/';
+
 export class FirebaseDB {
 
     public static fetchOriginals(): Promise<Array<string>> {
@@ -20,7 +23,7 @@ export class FirebaseDB {
 
     public static fetchImageInfo(): Promise<Array<ImageInfo>> {
         return new Promise((result, error) => {
-            var ref = firebase.database().ref('/characters/');
+            var ref = firebase.database().ref(characterRef);
             ref.orderByChild('timestamp').once('value', (snapshot) => {
                 var values = [];
                 snapshot.forEach((child) => {
@@ -68,11 +71,11 @@ export class FirebaseDB {
                 users: null
             }
         }
-        return firebase.database().ref('characters').child(baseName).set(data);
+        return firebase.database().ref(characterRef).child(baseName).set(data);
     }
 
     public static toggleLike(imageId, userId): void {
-        var ref = firebase.database().ref('characters').child(imageId).child('like');
+        var ref = firebase.database().ref(characterRef).child(imageId).child('like');
         ref.transaction((like) => {
             if (like) {
                 if (like.users && like.users[userId]) {

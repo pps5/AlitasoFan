@@ -1480,6 +1480,8 @@ var app = new App();
 Object.defineProperty(exports, "__esModule", { value: true });
 const firebase = (typeof window !== "undefined" ? window['firebase'] : typeof global !== "undefined" ? global['firebase'] : null);
 const es6_promise_1 = require("es6-promise");
+const IS_TESTING = true;
+var characterRef = IS_TESTING ? '/test/' : '/characters/';
 class FirebaseDB {
     static fetchOriginals() {
         return new es6_promise_1.Promise((result) => {
@@ -1495,7 +1497,7 @@ class FirebaseDB {
     }
     static fetchImageInfo() {
         return new es6_promise_1.Promise((result, error) => {
-            var ref = firebase.database().ref('/characters/');
+            var ref = firebase.database().ref(characterRef);
             ref.orderByChild('timestamp').once('value', (snapshot) => {
                 var values = [];
                 snapshot.forEach((child) => {
@@ -1539,10 +1541,10 @@ class FirebaseDB {
                 users: null
             }
         };
-        return firebase.database().ref('characters').child(baseName).set(data);
+        return firebase.database().ref(characterRef).child(baseName).set(data);
     }
     static toggleLike(imageId, userId) {
-        var ref = firebase.database().ref('characters').child(imageId).child('like');
+        var ref = firebase.database().ref(characterRef).child(imageId).child('like');
         ref.transaction((like) => {
             if (like) {
                 if (like.users && like.users[userId]) {
