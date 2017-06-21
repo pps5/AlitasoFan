@@ -22,9 +22,16 @@
     opacity: 1;
 }
 
+.end-of-alitasofan {
+    padding-top: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 gallery {
     display: block;
-    padding-top: 70px;
+    padding-top: 20px;
 }
 
 #order {
